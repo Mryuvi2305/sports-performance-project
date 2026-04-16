@@ -1,5 +1,5 @@
 import streamlit as st
-import cv2
+#import cv2
 import mediapipe as mp
 import pandas as pd
 import matplotlib.pyplot as plt
