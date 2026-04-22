@@ -102,3 +102,69 @@ if len(speed_data) > 0:
         create_pdf()
         with open("report.pdf", "rb") as f:
             st.download_button("Download PDF", f, file_name="report.pdf")
+import streamlit as st
+import cv2
+
+# 🔹 UI SETUP
+st.set_page_config(page_title="Sports AI", layout="wide")
+
+st.title("🏋️ Sports Performance Dashboard")
+st.subheader("AI Based Live Tracking System")
+
+# 🔹 SIDEBAR
+st.sidebar.title("Controls")
+
+exercise = st.sidebar.selectbox("Select Exercise", ["Pushup", "Squat", "Running"])
+
+start = st.sidebar.button("Start")
+stop = st.sidebar.button("Stop")
+
+# 🔹 SESSION STATE (IMPORTANT)
+if "run" not in st.session_state:
+    st.session_state.run = False
+
+if start:
+    st.session_state.run = True
+
+if stop:
+    st.session_state.run = False
+
+# 🔹 METRICS
+col1, col2, col3 = st.columns(3)
+col1.metric("Reps", "0")
+col2.metric("Accuracy", "0%")
+col3.metric("Calories", "0 kcal")
+
+# 🔹 VIDEO SECTION
+st.markdown("### 📹 Live Camera")
+frame_placeholder = st.empty()
+
+# 🔹 CAMERA LOOP
+if st.session_state.run:
+    cap = cv2.VideoCapture(0)
+
+    while st.session_state.run:
+        ret, frame = cap.read()
+        if not ret:
+            break
+
+        frame_placeholder.image(frame, channels="BGR")
+
+        # stop button check (important for Streamlit)
+        if not st.session_state.run:
+            break
+
+    cap.release()
+    cv2.destroyAllWindows()
+
+# 🔹 STYLE
+st.markdown("""
+<style>
+body {
+    background-color: #0f172a;
+}
+h1, h2, h3 {
+    color: #22c55e;
+}
+</style>
+""", unsafe_allow_html=True)
